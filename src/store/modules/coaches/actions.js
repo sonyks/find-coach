@@ -13,10 +13,11 @@ export default {
 
         const response = await axios.put(`https://coach-db-78f35-default-rtdb.firebaseio.com/coaches/${userId}.json`, coachData);
         
-        //const responseData = await response.json();
+        const responseData = await response.data;
 
         if (!response.ok) {
-            // error
+            const error = new Error(responseData.message || 'Failed to featch');
+            throw error;
         }
 
 
@@ -27,20 +28,20 @@ export default {
     },
     async loadCoaches(context) {
         const response = await axios.get('https://coach-db-78f35-default-rtdb.firebaseio.com/coaches.json');
-        
-        const responseData = await response.json();
-
+           
         if (!response.ok) {
             // error
         }
 
+        const responseData = response.data;
+
         const coaches = [];
         for (const key in responseData) {
             const coach = {
-                firstName: responseData[key].first,
-                lastName: responseData[key].last,
-                description: responseData[key].desc,
-                hourlyRate: responseData[key].rate,
+                firstName: responseData[key].firstName,
+                lastName: responseData[key].lastName,
+                description: responseData[key].desccription,
+                hourlyRate: responseData[key].hourlyRate,
                 areas: responseData[key].areas
             };
 
