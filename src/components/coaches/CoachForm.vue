@@ -104,11 +104,11 @@ export default {
             }
 
             const fromDate = {
-                first: this.firstName,
-                last: this.lastName,
-                desc: this.description,
-                rate: this.rate,
-                areas: this.areas
+                first: this.firstName.val,
+                last: this.lastName.val,
+                desc: this.description.val,
+                rate: this.rate.val,
+                areas: this.areas.val
             };
             
             this.$emit('save-data', fromDate);

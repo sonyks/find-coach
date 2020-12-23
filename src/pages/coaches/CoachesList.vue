@@ -1,5 +1,5 @@
 <template>
-    <base-dialog :show="!!error">
+    <base-dialog :show="!!error" title="An error occured!" @close="handleError">
         <p>{{ error }}</p>
     </base-dialog>
     <section>
@@ -42,13 +42,13 @@ export default {
             var coaches = this.$store.getters['coaches/coaches'];
             var filters = this.activeFilters;
             var filteredCoaches = coaches.filter(coach => {
-                if (filters.frontend && coach.areas.val.includes('frontend')) {
+                if (filters.frontend && coach.areas.includes('frontend')) {
                     return true;
                 }
-                if (filters.backend && coach.areas.val.includes('backend')) {
+                if (filters.backend && coach.areas.includes('backend')) {
                     return true;
                 }
-                if (filters.career && coach.areas.val.includes('career')) {
+                if (filters.career && coach.areas.includes('career')) {
                     return true;
                 }
                 return false;
@@ -75,6 +75,9 @@ export default {
             }
             
             this.isLoading = false;
+        },
+        handleError() {
+            this.error = null;
         }
     },
     created() {
