@@ -11,7 +11,8 @@ export default {
             areas: data.areas
         };
 
-        await axios.put(`https://coach-db-78f35-default-rtdb.firebaseio.com/coaches/${userId}.json`, coachData);
+        const token = context.rootGetters.token;
+        await axios.put(`https://coach-db-78f35-default-rtdb.firebaseio.com/coaches/${userId}.json?auth=${token}`, coachData);
         
         context.commit('registerCoach', {
             ...coachData,
