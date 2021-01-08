@@ -48,8 +48,8 @@ export default {
     },
     tryLogin(context) {
         const token = localStorage.getItem('token');
-        const userId = localStorage.setItem('userId');
-        const tokenExpiration = localStorage.setItem('tokenExpiration');
+        const userId = localStorage.getItem('userId');
+        const tokenExpiration = localStorage.getItem('tokenExpiration');
 
         const expiresIn = +tokenExpiration - new Date().getTime();
 
