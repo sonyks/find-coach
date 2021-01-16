@@ -13,16 +13,25 @@
 </template>
 
 <script>
+import { useStore } from 'vuex';
+import { useRouter } from 'vue-router';
+import { computed } from 'vue';
+
 export default {
-  computed: {
-    isLoggedIn() {
-      return this.$store.getters.isAuthenticated;
-    },
-  },
-  methods: {
-    logout() {
-      this.$store.dispatch('logout');
-      this.$router.replace('/coaches');
+  setup() {
+    const router = useRouter();
+    const store = useStore();
+
+    const isLoggedIn = computed(() => store.getters.isAuthenticated);
+
+    const logout = () => {
+      store.dispatch('logout');
+      router.replace('/coaches');
+    }
+
+    return {
+      isLoggedIn,
+      logout
     }
   }
 }

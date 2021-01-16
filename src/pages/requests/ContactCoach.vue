@@ -16,28 +16,39 @@
 </template>
 
 <script>
+import { ref } from 'vue';
+import { useRouter, useRoute } from 'vue-router';
+import { useStore } from 'vuex';
+
 export default {
-    data() {
-        return {
-            email: '',
-            message: '',
-            formIsValid: true
-        }
-    },
-    methods: {
-        submitForm() {
-            this.formIsValid = true;
-            if (this.email === '' || !this.email.includes('@') || this.message === '') {
-                this.formIsValid = false;
+    setup() {
+      const email = ref('');
+      const message = ref('');
+      const formIsValid = ref(true);
+      const router = useRouter();
+      const store = useStore();
+      const route = useRoute();
+
+      const submitForm = () => {
+            formIsValid.value = true;
+            if (email.value === '' || !email.value.includes('@') || message.value === '') {
+                formIsValid.value = false;
                 return;
             }
 
-            this.$store.dispatch('requests/contactCoach', {
-                email: this.email,
-                message: this.message,
-                coachId: this.$route.params.id
+            store.dispatch('requests/contactCoach', {
+                email: email.value,
+                message: message.value,
+                coachId: route.params.id
             });
-            this.$router.replace('/coaches');
+            router.replace('/coaches');
+        }
+
+      return {
+            email,
+            message,
+            formIsValid,
+            submitForm
         }
     }
 }

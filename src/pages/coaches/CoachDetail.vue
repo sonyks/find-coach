@@ -25,34 +25,49 @@
 </template>
 
 <script>
+import { ref, computed } from 'vue';
+import { useStore } from 'vuex';
+import { useRoute } from 'vue-router';
+
 export default {
   props: ['id'],
-  data() {
-    return {
-      selectedCoach: null,
-    };
-  },
-  computed: {
-    fullName() {
-      return this.selectedCoach.firstName + ' ' + this.selectedCoach.lastName;
-    },
-    areas() {
-      return this.selectedCoach.areas;
-    },
-    rate() {
-      return this.selectedCoach.hourlyRate;
-    },
-    description() {
-      return this.selectedCoach.description;
-    },
-    contactLink() {
-      return this.$route.path + '/' + this.id + '/contact';
-    },
-  },
-  created() {
-    this.selectedCoach = this.$store.getters['coaches/coaches'].find(
-      (coach) => coach.id === this.id
+  setup(props) {
+    const selectedCoach = ref(null);
+    const store = useStore();
+    const route = useRoute();
+
+    selectedCoach.value = store.getters['coaches/coaches'].find(
+      (coach) => coach.id === props.id
     );
-  },
+
+    const fullName = computed(() => {
+      return selectedCoach.value.firstName + ' ' + selectedCoach.value.lastName;
+    })
+
+    const areas = computed(() => {
+      return selectedCoach.value.areas;
+    })
+
+    const rate = computed(() => {
+      return selectedCoach.value.hourlyRate;
+    })
+
+    const description = computed(() => {
+      return selectedCoach.value.description;
+    })
+
+    const contactLink = computed(() => {
+      return route.path + '/' + props.id + '/contact';
+    })
+
+    return {
+      selectedCoach,
+      fullName,
+      areas,
+      rate,
+      description,
+      contactLink
+    };
+  }
 };
 </script>
