@@ -34,73 +34,66 @@
 </template>
 
 <script>
+import { reactive, ref } from 'vue';
+import { useStore } from 'vuex';
 import CoachItem from '../../components/coaches/CoachItem.vue';
 import CoachFilter from '../../components/coaches/CoachFilter.vue';
+import useCoach from '../../hooks/coach';
 
 export default {
   components: {
     CoachItem,
     CoachFilter,
   },
-  data() {
-    return {
-      isLoading: false,
-      error: null,
-      activeFilters: {
-        frontend: true,
-        backend: true,
-        career: true,
-      },
-    };
-  },
-  computed: {
-    isLoggedIn() {
-      return this.$store.getters.isAuthenticated;
-    },
-    isCoach() {
-      return this.$store.getters['coaches/isCoach'];
-    },
-    filteredCoaches() {
-      const coaches = this.$store.getters['coaches/coaches'];
-      return coaches.filter((coach) => {
-        if (this.activeFilters.frontend && coach.areas.includes('frontend')) {
-          return true;
-        }
-        if (this.activeFilters.backend && coach.areas.includes('backend')) {
-          return true;
-        }
-        if (this.activeFilters.career && coach.areas.includes('career')) {
-          return true;
-        }
-        return false;
-      });
-    },
-    hasCoaches() {
-      return !this.isLoading && this.$store.getters['coaches/hasCoaches'];
-    },
-  },
-  created() {
-    this.loadCoaches();
-  },
-  methods: {
-    setFilters(updatedFilters) {
-      this.activeFilters = updatedFilters;
-    },
-    async loadCoaches(refresh = false) {
-      this.isLoading = true;
+  setup() {
+    const isLoading = ref(false);
+    const error = ref(null);
+    const activeFilters = reactive({
+      frontend: true,
+      backend: true,
+      career: true,
+    });
+    const store = useStore();
+
+    const { isLoggedIn, isCoach, hasCoaches, filteredCoaches } = useCoach(isLoading.value, activeFilters);
+
+    const setFilters = (updatedFilters) => {
+      activeFilters.frontend = updatedFilters.frontend;
+      activeFilters.backend = updatedFilters.backend;
+      activeFilters.career = updatedFilters.career;
+    }
+
+    const loadCoaches = async (refresh = false) => {
+      isLoading.value = true;
       try {
-        await this.$store.dispatch('coaches/loadCoaches', {
+        await store.dispatch('coaches/loadCoaches', {
           forceRefresh: refresh,
         });
       } catch (error) {
-        this.error = error.message || 'Something went wrong!';
+        error.value = error.message || 'Something went wrong!';
       }
-      this.isLoading = false;
-    },
-    handleError() {
-      this.error = null;
-    },
-  },
+      isLoading.value = false;
+    }
+
+    const handleError = () => {
+      error.value = null;
+    }
+
+    loadCoaches();
+
+    return {
+      isLoading,
+      error,
+      activeFilters,
+      isLoggedIn,
+      isCoach,
+      filteredCoaches,
+      hasCoaches,
+      setFilters,
+      loadCoaches,
+      handleError
+    }
+  }
 };
 </script>
 
